@@ -7,14 +7,39 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+var hightlight = lipgloss.Style{}.Foreground(lipgloss.Color("7"))
+var dim = lipgloss.Style{}.Foreground(lipgloss.Color("8"))
+
 func header(_ Model) string {
-	s := lipgloss.Style{}.Foreground(lipgloss.Color("#FF00FF"))
+	s := hightlight
 	return s.Render("What should we buy?")
 }
 
 func footer(_ Model) string {
-	s := lipgloss.Style{}.Foreground(lipgloss.Color("#FF0000"))
-	return s.Render("Press 'q' to quit \n")
+
+	k := []string{
+		"q: quit",
+		"↑/↓: navigate",
+		"←/→: change value",
+		"1-9: select preset",
+		"enter: submit",
+		"?: help",
+	}
+
+	t := ""
+
+	for i, v := range k {
+		// Split the key and the command
+		s := strings.Split(v, ":")
+		t += hightlight.Render(s[0]) + dim.Render(s[1])
+		if i < len(k)-1 {
+			t += dim.Render(" | ")
+		}
+	}
+
+	t += "\n"
+
+	return t
 }
 
 func presets(m Model) string {
