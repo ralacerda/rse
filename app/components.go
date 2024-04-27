@@ -9,6 +9,7 @@ import (
 
 var hightlight = lipgloss.Style{}.Foreground(lipgloss.Color("7"))
 var dim = lipgloss.Style{}.Foreground(lipgloss.Color("8"))
+var green = lipgloss.Style{}.Foreground(lipgloss.Color("2"))
 
 func presets(m Model) string {
 	// Check if any value from the presets match the current value
@@ -17,13 +18,18 @@ func presets(m Model) string {
 	b := strings.Builder{}
 
 	b.WriteString("Presets: \n")
+
 	for i, preset := range m.presets {
 
 		if p == preset.name {
-			b.WriteString("✓")
+			b.WriteString(green.Render(fmt.Sprintf("[%d] %s", i+1, preset.name)))
+		} else {
+			b.WriteString(dim.Render(fmt.Sprintf("[%d] %s", i+1, preset.name)))
 		}
 
-		b.WriteString(fmt.Sprintf("[%d] %s | ", i+1, preset.name))
+		if i < len(m.presets)-1 {
+			b.WriteString(dim.Render(" | "))
+		}
 
 	}
 
