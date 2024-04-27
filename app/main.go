@@ -134,7 +134,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	return buildUi(m, header, presets, choices, footer)
+	return buildUi(m, presets, choices, footer)
 }
 
 func (m Model) Output() {
