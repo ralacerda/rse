@@ -137,35 +137,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	b := strings.Builder{}
 
-	b.WriteString(header())
+	b.WriteString(header(m))
 
-	// Check if any value from the presets match the current value
-	p := m.findMatchingPreset()
+	b.WriteString(presets(m))
 
-	b.WriteString("Presets: \n")
-	for i, preset := range m.presets {
-
-		if p == preset.name {
-			b.WriteString("✓")
-		}
-
-		b.WriteString(fmt.Sprintf("[%d] %s | ", i+1, preset.name))
-
-	}
 	b.WriteString("\n\n")
 
-	for i, choice := range m.variables {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">"
-		}
+	b.WriteString(choices(m))
 
-		value := choice.values[choice.selected]
-
-		b.WriteString(fmt.Sprintf("%s [%s] %s // %s \n", cursor, value, choice.name, choice.description))
-	}
-
-	b.WriteString(footer())
+	b.WriteString(footer(m))
 
 	return b.String()
 }
