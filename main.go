@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -135,22 +136,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	s := "What should we buy at the market?\n\n"
+	b := strings.Builder{}
+
+	b.WriteString("What should we buy at the market?\n\n")
 
 	// Check if any value from the presets match the current value
 	p := m.findMatchingPreset()
 
-	s += "Presets: \n"
+	b.WriteString("Presets: \n")
 	for i, preset := range m.presets {
 
 		if p == preset.name {
-			s += "✓"
+			b.WriteString("✓")
 		}
 
-		s += fmt.Sprintf("[%d] %s | ", i+1, preset.name)
+		b.WriteString(fmt.Sprintf("[%d] %s | ", i+1, preset.name))
 
 	}
-	s += "\n\n"
+	b.WriteString("\n\n")
 
 	for i, choice := range m.variables {
 		cursor := " "
@@ -160,12 +163,12 @@ func (m model) View() string {
 
 		value := choice.values[choice.selected]
 
-		s += fmt.Sprintf("%s [%s] %s // %s \n", cursor, value, choice.name, choice.description)
+		b.WriteString(fmt.Sprintf("%s [%s] %s // %s \n", cursor, value, choice.name, choice.description))
 	}
 
-	s += "\nPress q to quit.\n"
+	b.WriteString("\nPress q to quit.\n")
 
-	return s
+	return b.String()
 }
 
 func main() {
