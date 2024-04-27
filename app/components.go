@@ -3,14 +3,18 @@ package app
 import (
 	"fmt"
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 func header(_ Model) string {
-	return "What should we buy?"
+	s := lipgloss.Style{}.Foreground(lipgloss.Color("#FF00FF"))
+	return s.Render("What should we buy?")
 }
 
 func footer(_ Model) string {
-	return "Press 'q' to quit"
+	s := lipgloss.Style{}.Foreground(lipgloss.Color("#FF0000"))
+	return s.Render("Press 'q' to quit \n")
 }
 
 func presets(m Model) string {

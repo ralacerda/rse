@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"strconv"
-	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -135,19 +134,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	b := strings.Builder{}
-
-	b.WriteString(header(m))
-
-	b.WriteString(presets(m))
-
-	b.WriteString("\n\n")
-
-	b.WriteString(choices(m))
-
-	b.WriteString(footer(m))
-
-	return b.String()
+	return buildUi(m, header, presets, choices, footer)
 }
 
 func (m Model) Output() {
