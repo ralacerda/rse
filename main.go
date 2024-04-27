@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -25,9 +26,9 @@ type model struct {
 	presets   []preset
 }
 
-func applyPreset(m model, presetIndex int) model {
+func (p preset) apply(m model) model {
 	for i, choice := range m.variables {
-		if val, ok := m.presets[presetIndex].values[choice.name]; ok {
+		if val, ok := p.values[choice.name]; ok {
 			m.variables[i].selected = val
 		} else {
 			// Reset the value to default if not on the preset
@@ -35,6 +36,24 @@ func applyPreset(m model, presetIndex int) model {
 		}
 	}
 	return m
+}
+
+func (p preset) match(m model) bool {
+	for _, choice := range m.variables {
+		if p.values[choice.name] != choice.selected {
+			return false
+		}
+	}
+	return true
+}
+
+func (m model) findMatchingPreset() string {
+	for _, preset := range m.presets {
+		if preset.match(m) {
+			return preset.name
+		}
+	}
+	return ""
 }
 
 func initialModel() model {
@@ -104,12 +123,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.variables[m.cursor].selected = len(m.variables[m.cursor].values) - 1
 			}
-		case "1":
-			m = applyPreset(m, 0)
-		case "2":
-			m = applyPreset(m, 1)
-		case "3":
-			m = applyPreset(m, 2)
+
+		default:
+			if num, err := strconv.Atoi(msg.String()); err == nil && num >= 1 && num <= len(m.presets) {
+				m = m.presets[num-1].apply(m)
+			}
 		}
 	}
 
@@ -119,23 +137,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	s := "What should we buy at the market?\n\n"
 
-	var p string
-
 	// Check if any value from the presets match the current value
-	for _, preset := range m.presets {
-		match := true
-		for _, choice := range m.variables {
-			if preset.values[choice.name] != choice.selected {
-				match = false
-				break
-			}
-		}
-
-		if match {
-			p = preset.name
-			break
-		}
-	}
+	p := m.findMatchingPreset()
 
 	s += "Presets: \n"
 	for i, preset := range m.presets {
