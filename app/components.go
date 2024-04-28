@@ -10,6 +10,7 @@ import (
 var hightlight = lipgloss.Style{}.Foreground(lipgloss.Color("7"))
 var dim = lipgloss.Style{}.Foreground(lipgloss.Color("8"))
 var green = lipgloss.Style{}.Foreground(lipgloss.Color("2"))
+var blue = lipgloss.Style{}.Foreground(lipgloss.Color("4"))
 
 func presets(m Model) string {
 	// Check if any value from the presets match the current value
@@ -36,21 +37,49 @@ func presets(m Model) string {
 	return lipgloss.Style{}.MarginBottom(2).MarginTop(1).Render(b.String())
 }
 
+func truncateString(str string, maxLength int) string {
+	if len(str) <= maxLength {
+		return str
+	}
+	return fmt.Sprintf("%s..", str[:maxLength-2])
+}
+
 func choices(m Model) string {
-	b := strings.Builder{}
+	var s []string
 
 	for i, choice := range m.variables {
-		cursor := " "
+		cursor := "  "
 		if m.cursor == i {
-			cursor = ">"
+			cursor = blue.Render("→ ")
 		}
 
-		value := choice.values[choice.selected]
+		cs := lipgloss.Style{}.
+			Width(8).
+			AlignHorizontal(lipgloss.Center).
+			Render(truncateString(choice.values[choice.selected], 8))
 
-		b.WriteString(fmt.Sprintf("%s [%s] %s // %s \n", cursor, value, choice.name, choice.description))
+		c := fmt.Sprintf("[%s]", cs)
+
+		if m.cursor == i {
+			c = blue.Render(c)
+		}
+
+		n := hightlight.Copy().MarginLeft(2).Width(8).Render(choice.name)
+		if m.cursor == i {
+			n = blue.Copy().MarginLeft(2).Width(8).Render(choice.name)
+		}
+
+		var d string
+		if m.cursor == i {
+			d += dim.Copy().MarginLeft(2).Render(choice.description)
+		}
+
+		s = append(s, cursor+c+n+d)
 	}
 
-	return b.String()
+	s = append(s, "")
+
+	return lipgloss.JoinVertical(lipgloss.Left, s...)
 }
 
 func footer(_ Model) string {
