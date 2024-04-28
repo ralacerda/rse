@@ -19,6 +19,7 @@ func main() {
 	}
 
 	if m, ok := r.(app.Model); ok {
+		fmt.Print("\n")
 		m.Output()
 	}
 }

@@ -34,7 +34,7 @@ func presets(m Model) string {
 
 	}
 
-	return lipgloss.Style{}.MarginBottom(2).MarginTop(1).Render(b.String())
+	return lipgloss.Style{}.MarginBottom(1).MarginTop(1).Render(b.String())
 }
 
 func truncateString(str string, maxLength int) string {
