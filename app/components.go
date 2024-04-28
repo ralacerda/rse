@@ -17,7 +17,7 @@ func presets(m Model) string {
 
 	b := strings.Builder{}
 
-	b.WriteString("Presets: \n")
+	b.WriteString("Presets: ")
 
 	for i, preset := range m.presets {
 
@@ -33,7 +33,7 @@ func presets(m Model) string {
 
 	}
 
-	return b.String()
+	return lipgloss.Style{}.MarginBottom(2).MarginTop(1).Render(b.String())
 }
 
 func choices(m Model) string {
