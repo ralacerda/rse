@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"strconv"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -122,6 +121,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.variables[m.cursor].selected = len(m.variables[m.cursor].values) - 1
 			}
+		case "enter":
 
 		default:
 			if num, err := strconv.Atoi(msg.String()); err == nil && num >= 1 && num <= len(m.presets) {
@@ -137,8 +137,10 @@ func (m Model) View() string {
 	return buildUi(m, presets, choices, footer)
 }
 
-func (m Model) Output() {
+func (m Model) Output() map[string]string {
+	envs := make(map[string]string)
 	for _, choice := range m.variables {
-		fmt.Printf("%s: %v\n", choice.name, choice.values[choice.selected])
+		envs[choice.name] = choice.values[choice.selected]
 	}
+	return envs
 }

@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/ralacerda/rse/app"
@@ -18,8 +20,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	if m, ok := r.(app.Model); ok {
-		fmt.Print("\n")
-		m.Output()
+	m, _ := r.(app.Model)
+	envs := m.Output()
+
+	cmd := exec.Command("printenv")
+
+	for key, env := range envs {
+		os.Setenv(key, env)
 	}
+
+	cmd.Stdout = os.Stdout // or any other io.Writer
+	cmd.Stderr = os.Stderr // or any other io.Writer
+	if err := cmd.Run(); err != nil {
+		log.Println("ERROR Running")
+	}
+
 }
