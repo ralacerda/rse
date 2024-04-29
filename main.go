@@ -11,7 +11,35 @@ import (
 )
 
 func main() {
-	p := tea.NewProgram(app.InitialModel())
+	a := app.New([]app.Variable{
+		{
+			Name:        "EDITOR",
+			Description: "The editor to use",
+			Selected:    0,
+			Values:      []string{"vim", "emacs", "nano"},
+		},
+		{
+			Name:        "SHELL",
+			Description: "The shell to use",
+			Selected:    0,
+			Values:      []string{"bash", "zsh", "fish"},
+		},
+	}, []app.Preset{
+		{
+			Name: "Home",
+			Values: map[string]int{
+				"EDITOR": 1,
+				"SHELL":  1,
+			},
+		},
+		{
+			Name: "Work",
+			Values: map[string]int{
+				"EDITOR": 0,
+				"SHELL":  0,
+			}}})
+
+	p := tea.NewProgram(a)
 
 	r, err := p.Run()
 

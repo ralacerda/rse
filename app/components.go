@@ -22,10 +22,10 @@ func presets(m Model) string {
 
 	for i, preset := range m.presets {
 
-		if p == preset.name {
-			b.WriteString(green.Render(fmt.Sprintf("[%d] %s", i+1, preset.name)))
+		if p == preset.Name {
+			b.WriteString(green.Render(fmt.Sprintf("[%d] %s", i+1, preset.Name)))
 		} else {
-			b.WriteString(dim.Render(fmt.Sprintf("[%d] %s", i+1, preset.name)))
+			b.WriteString(dim.Render(fmt.Sprintf("[%d] %s", i+1, preset.Name)))
 		}
 
 		if i < len(m.presets)-1 {
@@ -56,7 +56,7 @@ func choices(m Model) string {
 		cs := lipgloss.Style{}.
 			Width(8).
 			AlignHorizontal(lipgloss.Center).
-			Render(truncateString(choice.values[choice.selected], 8))
+			Render(truncateString(choice.Values[choice.Selected], 8))
 
 		c := fmt.Sprintf("[%s]", cs)
 
@@ -64,14 +64,14 @@ func choices(m Model) string {
 			c = blue.Render(c)
 		}
 
-		n := hightlight.Copy().MarginLeft(2).Width(8).Render(choice.name)
+		n := hightlight.Copy().MarginLeft(2).Width(8).Render(choice.Name)
 		if m.cursor == i {
-			n = blue.Copy().MarginLeft(2).Width(8).Render(choice.name)
+			n = blue.Copy().MarginLeft(2).Width(8).Render(choice.Name)
 		}
 
 		var d string
 		if m.cursor == i {
-			d += dim.Copy().MarginLeft(2).Render(choice.description)
+			d += dim.Copy().MarginLeft(2).Render(choice.Description)
 		}
 
 		s = append(s, cursor+c+n+d)

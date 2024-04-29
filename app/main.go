@@ -6,39 +6,39 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type variable struct {
-	name        string
-	description string
-	selected    int
-	values      []string
+type Variable struct {
+	Name        string
+	Description string
+	Selected    int
+	Values      []string
 }
 
-type preset struct {
-	name   string
-	values map[string]int
+type Preset struct {
+	Name   string
+	Values map[string]int
 }
 
 type Model struct {
 	cursor    int
-	variables []variable
-	presets   []preset
+	variables []Variable
+	presets   []Preset
 }
 
-func (p preset) apply(m Model) Model {
+func (p Preset) apply(m Model) Model {
 	for i, choice := range m.variables {
-		if val, ok := p.values[choice.name]; ok {
-			m.variables[i].selected = val
+		if val, ok := p.Values[choice.Name]; ok {
+			m.variables[i].Selected = val
 		} else {
 			// Reset the value to default if not on the preset
-			m.variables[i].selected = 0
+			m.variables[i].Selected = 0
 		}
 	}
 	return m
 }
 
-func (p preset) match(m Model) bool {
+func (p Preset) match(m Model) bool {
 	for _, choice := range m.variables {
-		if p.values[choice.name] != choice.selected {
+		if p.Values[choice.Name] != choice.Selected {
 			return false
 		}
 	}
@@ -48,45 +48,16 @@ func (p preset) match(m Model) bool {
 func (m Model) findMatchingPreset() string {
 	for _, preset := range m.presets {
 		if preset.match(m) {
-			return preset.name
+			return preset.Name
 		}
 	}
 	return ""
 }
 
-func InitialModel() Model {
+func New(v []Variable, p []Preset) Model {
 	return Model{
-		variables: []variable{
-			{
-				name:        "Food",
-				description: "What should we buy at the market?",
-				values:      []string{"Burguer", "Salad", "Vegan Burguer"},
-			},
-			{
-				name:   "Drink",
-				values: []string{"Water", "Coke", "Diet Coke"},
-			},
-		},
-		presets: []preset{
-			{
-				name: "Default",
-				values: map[string]int{
-					"Food":  0,
-					"Drink": 0,
-				}},
-			{
-				name: "Vegan",
-				values: map[string]int{
-					"Food":  2,
-					"Drink": 1,
-				}},
-			{
-				name: "Healthy",
-				values: map[string]int{
-					"Food":  1,
-					"Drink": 2,
-				}},
-		},
+		variables: v,
+		presets:   p,
 	}
 }
 
@@ -110,16 +81,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case " ", "l", "right":
-			if m.variables[m.cursor].selected+1 < len(m.variables[m.cursor].values) {
-				m.variables[m.cursor].selected++
+			if m.variables[m.cursor].Selected+1 < len(m.variables[m.cursor].Values) {
+				m.variables[m.cursor].Selected++
 			} else {
-				m.variables[m.cursor].selected = 0
+				m.variables[m.cursor].Selected = 0
 			}
 		case "h", "left":
-			if m.variables[m.cursor].selected > 0 {
-				m.variables[m.cursor].selected--
+			if m.variables[m.cursor].Selected > 0 {
+				m.variables[m.cursor].Selected--
 			} else {
-				m.variables[m.cursor].selected = len(m.variables[m.cursor].values) - 1
+				m.variables[m.cursor].Selected = len(m.variables[m.cursor].Values) - 1
 			}
 		case "enter":
 
@@ -140,7 +111,7 @@ func (m Model) View() string {
 func (m Model) Output() map[string]string {
 	envs := make(map[string]string)
 	for _, choice := range m.variables {
-		envs[choice.name] = choice.values[choice.selected]
+		envs[choice.Name] = choice.Values[choice.Selected]
 	}
 	return envs
 }
